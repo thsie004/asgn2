@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <stdio.h>
 #include <iostream>
 #include <cstring>
 #include <string>
@@ -7,7 +8,7 @@
 using namespace std;
 
 //TOM: This function removes extra spaces at the head and tail of input
-//and also removes comments followed by #.
+//     and also removes comments followed by #.
 void prepareInput(string &input) {
     size_t hasHash = input.find("#");
 
@@ -35,50 +36,84 @@ void prepareInput(string &input) {
 }
 
 //TOM: This function returns the initial position of the first delimiter.
-//If no delimiter is found, returns 0.
+//     If no delimiter is found, returns 99999999.
 int firstCut(vector<size_t> v) {
     unsigned int min = 99999999;
 
     for (unsigned int i = 0; i < v.size(); i++) {
-        if ((v.at(i) > 0) && (min > v.at(i))) min = v.at(i);
+        if ((v.at(i) >= 0) && (min > v.at(i))) min = v.at(i);
     }
-
-    if (min == 99999999) min = 0;
 
     return min;
 }
 
-int main() {
+//TOM: Pass in an empty vector and get back a vector with tokens
+//     (e.g. "ls -a" or "||" or "echo hello") in sequential order.
+//     Note that the "exit" command is not handled here, because
+//     handling it in the interpretation of these tokens makes
+//     way much more sense.
+void getInput(vector<string> &tokenz) {
     string input;
-    vector<string> tokenz;
-    
-    cout << " $ ";
-    getline(cin, input);
-
-    prepareInput(input);
- 
     //TOM: 0 for ';', 1 for "&&", 2 for "||"
     vector<size_t> spots(3);
-    //TOM: cutPos is the first position to cut our input.   
+    //TOM: cutPos is the first position to cut our input.
     unsigned int cutPos;
-    //TOM: coin stores command substrings temporarily. 
+    //TOM: coin stores command substrings temporarily.
     string coin;
     
-    //TODO: This parser isn't checking for delimiters at the beginning of input yet.
-    //      An error should be printed if that's the case
-    //      Also delimiters at the end will need to be handled, too.
+    cout << "$ ";
+    getline(cin, input);
+    
+    prepareInput(input);
 
+    if (input.size() == 0) return;
+    
+    //TOM: Asks for more input when an attempt ends with valid connector.
+    //     If a connector follows immediately after ';', this loop
+    //     will continue to take inputs, and this error will be detected
+    //     in the loop where the input is turned into tokens.
+    if (input.size() > 2) {
+        while (input.substr(input.size() - 2) == "||" ||
+               input.substr(input.size() - 2) == "&&") {
+            string appendage;
+
+            cout << "> ";
+            getline(cin, appendage);
+            
+            if (appendage.size() == 0) continue;
+    
+            prepareInput(appendage);
+            input += appendage;
+        }
+    }
+    
+    //TOM: Removes ending ';' since if an input ends in ';' then
+    //     the ';' really has no purpose but complicated codes below.
+    if (input.at(input.size() - 1) == ';') {
+        input.erase(input.size() - 1);
+    }
+                            
     while (true) {
+        prepareInput(input);
         spots.at(0) = input.find(";");
         spots.at(1) = input.find("&&");
         spots.at(2) = input.find("||");
-        
+
         cutPos = firstCut(spots);
-
+        
+        //TOM: Connector at the front, syntax must be wrong.
+        //     Note that this doesn't check for invalid characters at front.
+        //     Also error message is printed manually, as I can't come up
+        //     with an alternative method.
         if (cutPos == 0) {
-            prepareInput(input);
-            tokenz.push_back(input);
+            cout << "-rshell: syntax error with unexpected connector";
+            tokenz.clear();
+            return;
+        }
 
+        if (cutPos == 99999999) {
+            tokenz.push_back(input);
+            
             break;
 
         }else {
@@ -101,16 +136,21 @@ int main() {
             }           
         }
     }
-    
-    cout << "Tokenz content: " << endl;
-    for (unsigned int i = 0; i < tokenz.size(); i++) {
-        cout << tokenz[i] << " size " << tokenz[i].size() << endl;
-    }
 
-    return 0;
+    return;
 }
 
+int main() {
+    vector<string> tokens;
+    getInput(tokens);
 
+    cout << "tokens content: " << endl;
+    for (unsigned int i = 0; i < tokens.size(); i++) {
+        cout << tokens[i] << " size " << tokens[i].size() << endl;
+    }
+                        
+    return 0;
+}
 
 
 
