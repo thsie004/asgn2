@@ -40,14 +40,23 @@ class Link: public Words
 class Line: public Words
 {
         protected:
+                string lines[255] = {0};
                 vector<Words*> log;
                 vector<string> comments;
  
         public:
                 Line(){};
-                void memorize(string){};
+                void memorize(string);
 };
 
-
-
+void Line::memorize(string oldLine)
+{
+        for(int i = 0; i <255; i++)
+        {
+                if(lines[i] == {0})
+                {
+                        lines[i] = oldLine;
+                }
+        }       
+}
 #endif
