@@ -74,7 +74,7 @@ void getInput(vector<string> &tokenz) {
     if (input.size() == 0) return;
     
     //TOM: Asks for more input when an attempt ends with valid connector.
-    //     If a connector follows immediately after ';', this loop
+    //     If a connector follows immediately after another, this loop
     //     will continue to take inputs, and this error will be detected
     //     in the loop where the input is turned into tokens.
     if (input.size() > 2) {
@@ -145,16 +145,16 @@ void getInput(vector<string> &tokenz) {
     return;
 }
 
-//Wangho: This function is for executing command, cmd[0] should contain the
+//Wangho: This function executes commands: cmd[0] should contain the
 //        main command while anything else is flags, ***NEED a NULL at the
 //        end of it.
 int execute(char* cmd[]) {
     pid_t pid;
     int status;
     int output = 0;
-    int fd[2];    //Wangho: This is a piepe that for passing variable
+    int fd[2];    //Wangho: This is a pipe made for passing variable
                   //        (this case: output) between parent and child
-                  //        process
+                  //        process.
     
     pipe(fd);
     pid = fork();
@@ -163,22 +163,22 @@ int execute(char* cmd[]) {
     }else if (pid == 0) {
         //Wangho: Close the read function of pipe
         close(fd[0]);
-        //Wangho: This is child process
+        //Wangho: This is the child process
         output = execvp(cmd[0], cmd);
 
-        //Wangho: Will only be here if the execp() fail, so output fail
+        //Wangho: Will only be here if execp() fail, which means output failed
         write(fd[1], &output, sizeof(output));
         perror("rshell");
         exit(0);
     }else if (pid > 0) {
         //Wangho: Close the write function of pipe
         close(fd[1]);
-        //Wangho: This is parent process
+        //Wangho: This is the parent process
         waitpid(pid, &status, 0);
         
         //Wangho: When child process is fully returned
         if(WIFEXITED(status)){
-            //Wangho: Take the output value, if execvp fail, it returns -1
+            //Wangho: Take the output value; if execvp fail, it returns -1
             read(fd[0], &output, sizeof(output));
             return output;
         }
@@ -225,12 +225,6 @@ int main() {
 /*end TEST AREA*/
     return 0;
 }
-
-
-
-
-
-
 
 
 
