@@ -16,12 +16,14 @@ using namespace std;
 //     and also removes comments followed by #.
 void prepareInput(string &input) {
     size_t hasHash = input.find("#");
-
+    
     if (hasHash != string::npos) {
         input.erase(hasHash);
     }
-
+    
     while (true) {
+        if (input.size() == 0) return;
+
         if (input.at(0) == ' ') {
             input.erase(0,1);
         }else {
@@ -52,11 +54,32 @@ int firstCut(vector<size_t> v) {
     return min;
 }
 
+//TOM: handles getting extra input if previous line ended in a connector
+void getMoreInput(string &input) {
+    string appendage;
+
+    cout << "> ";
+    getline(cin, appendage);
+    prepareInput(appendage);
+
+    if (appendage.size() == 0) {
+        getMoreInput(input);
+        return;
+    }
+
+    input += appendage;
+
+    return;
+}
+
 //TOM: Pass in an empty vector and get back a vector with tokens
 //     (e.g. "ls -a" or "||" or "echo hello") in sequential order.
 //     Note that the "exit" command is not handled here, because
 //     handling it in the interpretation of these tokens makes
-//     way much more sense.
+//     way much more sense. Inputs like &&& or ||| will make the third
+//     character an input instead of calling it syntax error.
+//     Inputs like &&&& and |||| or more of the same connector
+//     characters will invoke error detection.
 void getInput(vector<string> &tokenz) {
     string input;
     //TOM: 0 for ';', 1 for "&&", 2 for "||"
@@ -68,36 +91,11 @@ void getInput(vector<string> &tokenz) {
     
     cout << "$ ";
     getline(cin, input);
-    
+   
     prepareInput(input);
 
     if (input.size() == 0) return;
-    
-    //TOM: Asks for more input when an attempt ends with valid connector.
-    //     If a connector follows immediately after another, this loop
-    //     will continue to take inputs, and this error will be detected
-    //     in the loop where the input is turned into tokens.
-    if (input.size() > 2) {
-        while (input.substr(input.size() - 2) == "||" ||
-               input.substr(input.size() - 2) == "&&") {
-            string appendage;
 
-            cout << "> ";
-            getline(cin, appendage);
-            
-            if (appendage.size() == 0) continue;
-    
-            prepareInput(appendage);
-            input += appendage;
-        }
-    }
-    
-    //TOM: Removes ending ';' since if an input ends in ';' then
-    //     the ';' really has no purpose but complicated codes below.
-    if (input.at(input.size() - 1) == ';') {
-        input.erase(input.size() - 1);
-    }
-                            
     while (true) {
         prepareInput(input);
         spots.at(0) = input.find(";");
@@ -111,7 +109,12 @@ void getInput(vector<string> &tokenz) {
         //     Also error message is printed manually, as I can't come up
         //     with an alternative method.
         if (cutPos == 0) {
-            cout << "-rshell: syntax error with unexpected connector";
+            cout << "-rshell: syntax error with unexpected connector ";
+
+            if (input.at(0) == '&') cout << "\"&&\"\n";
+            if (input.at(0) == ';') cout << "\";\"\n";
+            if (input.at(0) == '|') cout << "\"||\"\n";
+
             tokenz.clear();
             return;
         }
@@ -134,9 +137,13 @@ void getInput(vector<string> &tokenz) {
                 tokenz.push_back("||");
                 input.erase(0, cutPos + 2);
 
+                if (input.size() == 0) getMoreInput(input);
+
             }else if (input.at(cutPos) == '&'){
                 tokenz.push_back("&&");
                 input.erase(0, cutPos + 2);
+
+                if (input.size() == 0) getMoreInput(input);
 
             }           
         }
