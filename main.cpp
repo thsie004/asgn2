@@ -4,6 +4,11 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 using namespace std;
 
@@ -140,15 +145,84 @@ void getInput(vector<string> &tokenz) {
     return;
 }
 
+//Wangho: This function is for executing command, cmd[0] should contain the
+//        main command while anything else is flags, ***NEED a NULL at the
+//        end of it.
+int execute(char* cmd[]) {
+    pid_t pid;
+    int status;
+    int output = 0;
+    int fd[2];    //Wangho: This is a piepe that for passing variable
+                  //        (this case: output) between parent and child
+                  //        process
+    
+    pipe(fd);
+    pid = fork();
+    if (pid < 0) {
+        perror("rshell");
+    }else if (pid == 0) {
+        //Wangho: Close the read function of pipe
+        close(fd[0]);
+        //Wangho: This is child process
+        output = execvp(cmd[0], cmd);
+
+        //Wangho: Will only be here if the execp() fail, so output fail
+        write(fd[1], &output, sizeof(output));
+        perror("rshell");
+        exit(0);
+    }else if (pid > 0) {
+        //Wangho: Close the write function of pipe
+        close(fd[1]);
+        //Wangho: This is parent process
+        waitpid(pid, &status, 0);
+        
+        //Wangho: When child process is fully returned
+        if(WIFEXITED(status)){
+            //Wangho: Take the output value, if execvp fail, it returns -1
+            read(fd[0], &output, sizeof(output));
+            return output;
+        }
+    }
+}
+
 int main() {
     vector<string> tokens;
     getInput(tokens);
+    int output = 0;
 
     cout << "tokens content: " << endl;
     for (unsigned int i = 0; i < tokens.size(); i++) {
         cout << tokens[i] << " size " << tokens[i].size() << endl;
     }
-                        
+
+/*Wangho: TEST AREA*/
+    string ls = "ls";
+    string dash = "-l";
+    char* cmd[] = {(char*)ls.c_str(), (char*)dash.c_str(), NULL};
+
+    string ls2 = "ls";
+    string dash2 = "-a";
+    char* cmd2[] = {(char*)ls2.c_str(), (char*)dash2.c_str(), NULL};
+
+    string connect = ";";       
+
+    if (connect == ";" /*Wangho: if connector is ";"*/) {
+        execute(cmd);
+        execute(cmd2);
+    }else if (connect == "&&" /*Wangho: if connecter is "&&"*/) {
+        output = execute(cmd);
+
+        if (output == 0) {
+            execute(cmd2);
+        }
+    }else if (connect == "||" /*Wangho: if connecter is "||"*/) {
+        output = execute(cmd);
+
+        if (output == -1) {
+            execute(cmd2);
+        }
+    }
+/*end TEST AREA*/
     return 0;
 }
 
