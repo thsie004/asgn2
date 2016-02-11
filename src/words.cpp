@@ -8,11 +8,15 @@
 
 //implementation of Node
 Node::Node(string token) {
-    this->content = token;
+        this->content = token;
 }
 
-void Node::setNext(Words* n) {
-    this->next = n;
+void Node::setNext(Node* n) {
+        this->next = n;
+}
+
+Node* Node::getNext() {
+        return this->next;
 }
 
 void Node::run(int state) {
@@ -52,30 +56,38 @@ void Node::run(int state) {
         next->run(0);
     }                                    
 }
-
+#include<iostream>
 //implementation of Line
-Line::Line(vector<string> input) {
+Line::Line(const vector<string> &input) {
     if (input.empty()) return;
 
-    this->next = new Node(input.at(1));
+    Node *a;
 
-    Words *a, *b;
+    head = new Node(input.at(1));
+    a = head;
 
-    for (int i = 0; i < input.size(); i++) {
-
+    for (int i = 2; i < input.size(); i++) {
+        a->setNext(new Node(input.at(i)));
+        a = a->getNext();
     }
+    
+    a->setNext(0);
+}
 
+Line::~Line() {
 }
 
 void Line::run(int state){
-    next->run(1);
+    head->run(1);
+}
+
+void printLine() {
 }
 
 
 
-
-
-
+//Line is EXTREMELY INCOMPLETE
+//also the code in this main will cause mem leak and im still testing stuff
 
 
 
@@ -138,6 +150,18 @@ int main(){
     cmd[2] = NULL;
     
     execute(cmd);
+
+    vector<string> ss;
+    ss.push_back("hi");
+    ss.push_back("||");
+    ss.push_back("1");
+    ss.push_back("&&");
+    ss.push_back("2");
+
+    Line abc(ss);
+
+
+
     return 0;
 }
 

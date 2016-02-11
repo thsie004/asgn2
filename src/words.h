@@ -5,36 +5,32 @@
 
 using namespace std;
 
-//Base class
-class Words {
-    protected:
-        Words* next;
-
-    public:
-        Words() {};
-        virtual void run(int) = 0;
-};
-
 //Nodes can be either a bash command or a connector
-class Node: public Words {
-    protected:
+class Node {
+    public:
+        Node* next;
         string content;
 
     public:
         Node(string);
 
-        void setNext(Words*);
+        void setNext(Node*);
+        Node* getNext();
         void run(int);
 };
 
 //Basically the head of the user input linked list. Organizes input into a 
 //easily executable chain of Words.
-class Line: public Words {
+class Line {
+    protected:
+        Node* head;
+
     public:
-        Line(vector<string>);
+        Line(const vector<string> &);
         ~Line();
 
         void run(int);
+        void printLine();
 };
 
 //Wangho: This function executes commands: cmd[0] should contain the
