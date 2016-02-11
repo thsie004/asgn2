@@ -1,5 +1,5 @@
 By:
-    Tung Lin Hsieh, Wang Ho Ha
+    Tung Lin (Tom) Hsieh, Wang Ho (Allen) Ha
 
 Abstract:
 
@@ -23,9 +23,9 @@ Known Bugs/Issues:
      badly with dynamically allocated array and will not let it be freed
      properly causing a unsolvable memory leak. After 3 hours of work I (Tom)
      decided that we will not worry about single bash commands over 998
-     characters long (by single I mean command with no connectors).
+     characters long (by single I mean commands with no connectors).
 
     -During a command that takes a significant amount of time (e.g. ping -c
      10 www.google.com), any input from the keyboard will be recognized by 
-     rshell and executed or attached to the from of your input after the
+     rshell and executed or attached to the front of your next input after the
      long-lasting command halted.
