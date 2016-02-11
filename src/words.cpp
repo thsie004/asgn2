@@ -1,4 +1,5 @@
 #include <cstring>
+#include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,8 +12,16 @@ Node::Node(string token) {
     this->content = token;
 }
 
-void Node::setNext(Words* n) {
+void Node::setNext(Node* n) {
     this->next = n;
+}
+
+Node* Node::getNext() {
+    return this->next;
+}
+
+string Node::getContent() {
+    return this->content;
 }
 
 void Node::run(int state) {
@@ -54,43 +63,49 @@ void Node::run(int state) {
 }
 
 //implementation of Line
-Line::Line(vector<string> input) {
+Line::Line(const vector<string> &input) {
     if (input.empty()) return;
 
-    this->next = new Node(input.at(1));
+    Node *a;
 
-    Words *a, *b;
+    head = new Node(input.at(0));
+    a = head;
 
-    for (int i = 0; i < input.size(); i++) {
-
+    for (int i = 1; i < input.size(); i++) {
+        a->setNext(new Node(input.at(i)));
+        a = a->getNext();
     }
 
+    a->setNext(0);
+}
+
+Line::~Line() {
+    Node* a = head;
+    Node* x;
+
+    while (a != 0) {
+        x = a;
+        a = a->getNext();
+
+        delete x;
+    }
 }
 
 void Line::run(int state){
-    next->run(1);
+    head->run(1);
+}
+
+void Line::printLine() {
+    Node* a = head;
+    while (a != 0) {
+        cout << a->getContent() << endl;
+        a = a->getNext();
+    }
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//Executes a bash command
 int execute(char* cmd[]) {
     pid_t pid;
     int status;
@@ -149,6 +164,20 @@ int main(){
     cmd[2] = NULL;
     
     execute(cmd);
+
+    vector<string> ss;
+    ss.push_back("hi");
+    ss.push_back("||");
+    ss.push_back("1");
+    ss.push_back("&&");
+    ss.push_back("2");
+    ss.push_back("fdjsal;k");
+    ss.push_back("fd");
+
+    Line abc(ss);
+    abc.printLine();
+
+
     return 0;
 }
 
