@@ -1,5 +1,6 @@
 #include <cstdlib>
-#include <iostream>
+#include <limits.h>
+#include <stdio.h>
 #include "input.cpp"
 #include "words.cpp"
 
@@ -24,9 +25,16 @@ int main() {
     }
     //end of log in info
 
+    vector<string> userInput;
     
-
-
+    //loop for rshell
+    while (true) {
+        userInput.clear();
+        getInput(userInput, username, hostname);
+        Line runThis(userInput);
+        runThis.run();
+    }
 
     return 0;
 }
+

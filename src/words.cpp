@@ -57,23 +57,29 @@ void Node::run(int state) {
 
     //Then the node is a bash command
     if (state == 0){
-        char* test = new char[content.size()+1];
-        char* cstr = new char[content.size()+1];
-        char *pch1, *pch2, quit[] = "exit";
+        //strtok messes a WHOLE LOT with dynamic allocated arrays
+        //to a point where properly freeing them isn't possible.
+        char test[999];
+        char cstr[999];
+        char *pch1,*pch2, quit[] = "exit";
         int count = 0, i = 0;
+        
         
         //we're cutting string up twice
         //first time is to know how many slots in cmd do we need
-        //second time creates the actual char** cmd into execute()
+        //second time creates the actual char** cmd into execute()        
         strcpy(test, content.c_str());
         strcpy(cstr, content.c_str());
+        
         pch1 = strtok(test, " ");
         while (pch1 != NULL) {
             count++;
             pch1 = strtok(NULL, " ");
         }
-
-        char* cmd[count+1];
+        
+        //-Werror and -pedantic gave me a lot of trouble for this
+        //so there may be bugs/unknown segfaults.
+        char* cmd[] = {0};
         pch2 = strtok(cstr, " ");
         while (pch2 != NULL) {
             cmd[i] = pch2;
@@ -81,17 +87,19 @@ void Node::run(int state) {
             pch2 = strtok(NULL, " ");
         }
         
+        //quit rshell if the command is "exit" followed by whatever
         if (!strcmp(cmd[0], quit)) exit(0);
 
         cmd[count] = NULL;
-         
+             
         int status = execute(cmd);
 
         if (next == 0) return;
         next->run(status);
         
-        delete[] test;
-        delete[] cstr;
+        //delete[] test;
+        //delete[] cstr;
+         
     }else {
         if (next == 0) return;
         next->run(-1);
@@ -100,19 +108,21 @@ void Node::run(int state) {
 
 //implementation of Line
 Line::Line(const vector<string> &input) {
-    if (input.empty()) return;
+    head = 0;
 
-    Node *a;
+    if (!input.empty()) {
+        Node *a;
+        
+        head = new Node(input.at(0));
+        a = head;
 
-    head = new Node(input.at(0));
-    a = head;
-
-    for (int i = 1; i < input.size(); i++) {
-        a->setNext(new Node(input.at(i)));
-        a = a->getNext();
+        for (unsigned int i = 1; i < input.size(); i++) {
+            a->setNext(new Node(input.at(i)));
+            a = a->getNext();
+        }
+        
+        a->setNext(0);
     }
-
-    a->setNext(0);
 }
 
 Line::~Line() {
@@ -128,9 +138,10 @@ Line::~Line() {
 }
 
 void Line::run(){
-    head->run(0);
+    if (head != 0) head->run(0);
 }
 
+//for testing purposes only
 void Line::printLine() {
     Node* a = head;
     while (a != 0) {
@@ -141,7 +152,8 @@ void Line::printLine() {
 
 
 
-//Executes a bash command, returns 
+//Executes a bash command, returns 0 if successful, -1 if uneventful.
+//Note execvp returns success if the command is valid but the flag is not.
 int execute(char* cmd[]) {
     pid_t pid;
     int status;
@@ -170,38 +182,44 @@ int execute(char* cmd[]) {
         if (write(fd[1], &output, sizeof(output)) == -1) {
             perror("Pipe writing error");
         }
+
+        //perror for execvp
         perror(cmd[0]);
+        exit(1);
     }else if (pid > 0) {
         //Wangho: Close the write function of pipe
         if (close(fd[1])) {
             perror("Pipe closing error [1]");
         }
         //Wangho: This is the parent process
-        waitpid(pid, &status, 0);
+        if (waitpid(pid, &status, 0) == -1) {
+            perror("waitpid error");
+        }
         
         //Wangho: When child process is fully returned
         if(WIFEXITED(status)){
-            //Wangho: Take the output value; if execvp fail, it returns -1
+            //Wangho: Take the output value; if execvp failed, it returns -1
             if (read(fd[0], &output, sizeof(output)) == -1) {
                 perror("Pipe reading error");
             }
             return output;
         }
     }
+    return -1;
 }
+
 
 /*
 int main(){
     vector<string> ss;
     ss.push_back("ls      -a");
     ss.push_back("&&");
-    ss.push_back("exit hello");
+    ss.push_back("echo why");
     ss.push_back(";");
     ss.push_back("echo hello");
 
     Line abc(ss);
     abc.run();
-
     return 0;
 }
 */

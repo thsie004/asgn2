@@ -13,8 +13,19 @@ Known Bugs/Issues:
      in rshell. In rshell other non-related bash chaining operators will be
      treated as if they are part of a command.
 
-    -By inputting "ls -e" to the program, the program is bugged because it returned
-     a success signal to execvp(). However, according to the man page, option -e 
-     will not work for ls. So, we cannot get what we want by returning the fail 
-     value. We believe the reason is ls go through the execvp(), while the flags
-     are not counted while we execute execvp().
+    -Inputting "ls -e" to the program will bug it because execvp() returns
+     a success signal as ls is called successfully. However, option -e will 
+     not work for ls, so ls will not do its job although successfully called. 
+     So, we cannot get what we want which is for execvp() to return the fail 
+     value.
+
+    -Commands may not exceed 998 characters because strtok() interacts very
+     badly with dynamically allocated array and will not let it be freed
+     properly causing a unsolvable memory leak. After 3 hours of work I (Tom)
+     decided that we will not worry about single bash commands over 998
+     characters long (by single I mean command with no connectors).
+
+    -During a command that takes a significant amount of time (e.g. ping -c
+     10 www.google.com), any input from the keyboard will be recognized by 
+     rshell and executed or attached to the from of your input after the
+     long-lasting command halted.

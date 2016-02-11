@@ -2,6 +2,7 @@
 #define _INPUT_CPP_
 #include <string>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -19,7 +20,9 @@ void prepareInput(string &input) {
     }
     
     while (true) {
-        if (input.size() == 0) return;
+        if (input.size() == 0) {
+            return;
+        }
 
         if (input.at(0) == ' ') {
             input.erase(0,1);
@@ -57,6 +60,7 @@ void getMoreInput(string &input) {
 
     cout << "> ";
     getline(cin, appendage);
+    cin.clear();
     prepareInput(appendage);
 
     if (appendage.size() == 0) {
@@ -77,7 +81,7 @@ void getMoreInput(string &input) {
 //     character an input instead of calling it syntax error.
 //     Inputs like &&&& and |||| or more of the same connector
 //     characters will invoke error detection.
-void getInput(vector<string> &tokenz) {
+void getInput(vector<string> &tokenz, char* user, char* host) {
     string input;
     //TOM: 0 for ';', 1 for "&&", 2 for "||"
     vector<size_t> spots(3);
@@ -86,15 +90,16 @@ void getInput(vector<string> &tokenz) {
     //TOM: coin stores command substrings temporarily.
     string coin;
     
-    cout << "$ ";
+    cin.clear(); 
+    cout << user << '@' << host << "$ ";
     getline(cin, input);
-   
-    prepareInput(input);
-
-    if (input.size() == 0) return;
 
     while (true) {
         prepareInput(input);
+        if (input.size() == 0) {
+            return;
+        }
+                         
         spots.at(0) = input.find(";");
         spots.at(1) = input.find("&&");
         spots.at(2) = input.find("||");
@@ -149,9 +154,15 @@ void getInput(vector<string> &tokenz) {
     return;
 }
 
-//IMPORTANT!: TOM: I have moved your execute to words.h and words.cpp because
-//this function will only be used by that class, and not for inputs. Please 
-//update this function in those files when you start working.
+/*
+int main() {
+    vector<string> hello;
+    char x[] = "lol";
+    char y[] = "what";
+    getInput(hello, x, y);
+    return 0;
+}
+*/
 
 #endif
 

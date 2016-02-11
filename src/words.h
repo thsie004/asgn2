@@ -5,6 +5,10 @@
 
 using namespace std;
 
+/*This file and its implementations interprets and runs user input
+ */
+
+
 //Nodes can be either a bash command or a connector
 class Node {
     protected:
