@@ -23,7 +23,9 @@ Known Bugs/Issues:
      badly with dynamically allocated array and will not let it be freed
      properly causing a unsolvable memory leak. After 3 hours of work I (Tom)
      decided that we will not worry about single bash commands over 998
-     characters long (by single I mean command with no connectors).
+     characters long (by single I mean command with no connectors). Also
+     there cannot be more than 99 tokens in a single command for a similar
+     reason.
 
     -During a command that takes a significant amount of time (e.g. ping -c
      10 www.google.com), any input from the keyboard will be recognized by 

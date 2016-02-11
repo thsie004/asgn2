@@ -79,7 +79,7 @@ void Node::run(int state) {
         
         //-Werror and -pedantic gave me a lot of trouble for this
         //so there may be bugs/unknown segfaults.
-        char* cmd[] = {0};
+        char* cmd[100];
         pch2 = strtok(cstr, " ");
         while (pch2 != NULL) {
             cmd[i] = pch2;
