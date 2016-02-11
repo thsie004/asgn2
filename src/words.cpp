@@ -61,7 +61,10 @@ void Node::run(int state) {
         char* cstr = new char[content.size()+1];
         char *pch1, *pch2;
         int count = 0, i = 0;
-
+        
+        //we're cutting string up twice
+        //first time is to know how many slots in cmd do we need
+        //second time creates the actual char** cmd into execute()
         strcpy(test, content.c_str());
         strcpy(cstr, content.c_str());
         pch1 = strtok(test, " ");
