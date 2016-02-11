@@ -30,7 +30,7 @@ class Line {
         Line(const vector<string> &);
         ~Line();
 
-        void run(int);
+        void run();
         void printLine();
 };
 
