@@ -21,9 +21,9 @@ class Command: public Words {
         string command;
 
     public:
-        Command(Words*, string);
-        ~Command();
+        Command(string);
 
+        void setNext(Words*);
         void run(int);
 };
 
@@ -34,9 +34,9 @@ class Link: public Words {
         string connector;
 
     public:
-        Link(Words*, string);
-        ~Link();
+        Link(string);
 
+        void setNext(Words*);
         void run(int);
 };
 

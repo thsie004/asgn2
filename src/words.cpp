@@ -7,12 +7,12 @@
 #include "words.h"
 
 //implementation of Command
-Command::Command(Words* a, string token) {
-    this->next = a;
+Command::Command(string token) {
     this->command = token;
 }
 
-Command::~Command() {
+void Command::setNext(Words* n) {
+    this->next = n;
 }
 
 void Command::run(int state) {
@@ -25,12 +25,12 @@ void Command::run(int state) {
 }
 
 //implementation of Link
-Link::Link(Words* a, string token) {
-    this->next = a;
+Link::Link(string token) {
     this->connector = token;    
 }
 
-Link::~Link() {
+void Link::setNext(Words* n) {
+    this->next = n;
 }
 
 void Link::run(int state) {
@@ -62,6 +62,14 @@ void Link::run(int state) {
 }
 
 //implementation of Line
+Line::Line(vector<string> input) {
+    if (input.empty()) return;
+
+    for (int i = input.size() - 1; i <= 0; i--) {
+        
+    }
+}
+
 void Line::run(int state){
     next->run(1);
 }
