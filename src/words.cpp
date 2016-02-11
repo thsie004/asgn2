@@ -19,6 +19,7 @@ void Command::run(int state) {
     if (state > 0){
 
     }else {
+        if (next == 0) return; 
         next->run(0);
     }
 }
@@ -52,14 +53,18 @@ void Link::run(int state) {
     }
 
     if (connector == ";") {
-        next->run(1);
-        return;
+        if (next == 0) {
+            return;
+        }else {
+            next->run(1);
+        }
     }
-
-    return;
 }
 
 //implementation of Line
+void Line::run(int state){
+    next->run(1);
+}
 
 
 
@@ -81,8 +86,9 @@ void Link::run(int state) {
 
 
 
-
-int execute(char** cmd) {
+int execute(char* cmd[]) {
+    pid_t pid;
+    int status;
     int output = 0;
     int fd[2];    //Wangho: This is a pipe made for passing variable
                   //        (this case: output) between parent and child
@@ -117,7 +123,7 @@ int execute(char** cmd) {
     }
 }
 
-/*
+
 int main(){
     char a[] = "pwd";
     char b[] = "";
@@ -129,4 +135,4 @@ int main(){
     execute(cmd);
     return 0;
 }
-*/
+
