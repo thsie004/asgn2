@@ -1,5 +1,5 @@
-#ifndef _WORDS_H
-#define _WORDS_H
+#ifndef _WORDS_H_
+#define _WORDS_H_
 #include <vector>
 #include <string>
 
@@ -12,7 +12,7 @@ class Words {
         Words* R;
 
     public:
-        Words(){};
+        Words() {};
         virtual int execute(int) = 0;
 };
 
@@ -55,6 +55,11 @@ class Line {
 
 //Function that converts strings into array of cstring for execvp.
 char** gimmeArgs(string);
+
+//Wangho: This function executes commands: cmd[0] should contain the
+//        main command while anything else is flags, ***NEED a NULL at the
+//        end of it.
+int execute(char**);
 
 #endif
 
