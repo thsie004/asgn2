@@ -61,7 +61,10 @@ void Node::run(int state) {
         char* cstr = new char[content.size()+1];
         char *pch1, *pch2;
         int count = 0, i = 0;
-
+        
+        //we're cutting string up twice
+        //first time is to know how many slots in cmd do we need
+        //second time creates the actual char** cmd into execute()
         strcpy(test, content.c_str());
         strcpy(cstr, content.c_str());
         pch1 = strtok(test, " ");
@@ -164,7 +167,7 @@ int execute(char* cmd[]) {
         if (write(fd[1], &output, sizeof(output)) == -1) {
             perror("Pipe writing error");
         }
-        perror("Invalid command");
+        perror(cmd[0]);
     }else if (pid > 0) {
         //Wangho: Close the write function of pipe
         if (close(fd[1])) {
@@ -188,7 +191,7 @@ int main(){
     vector<string> ss;
     ss.push_back("ls      -a");
     ss.push_back("&&");
-    ss.push_back("pw");
+    ss.push_back("ls -e");
     ss.push_back("||");
     ss.push_back("echo hello world");
 
