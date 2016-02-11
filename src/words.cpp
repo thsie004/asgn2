@@ -63,25 +63,39 @@ Line::Line(const vector<string> &input) {
 
     Node *a;
 
-    head = new Node(input.at(1));
+    head = new Node(input.at(0));
     a = head;
 
-    for (int i = 2; i < input.size(); i++) {
+    for (int i = 1; i < input.size(); i++) {
         a->setNext(new Node(input.at(i)));
         a = a->getNext();
     }
-    
+
     a->setNext(0);
 }
 
 Line::~Line() {
+    Node* a = head;
+    Node* x;
+
+    while (a != 0) {
+        x = a;
+        a = a->next;
+
+        delete x;
+    }
 }
 
 void Line::run(int state){
     head->run(1);
 }
 
-void printLine() {
+void Line::printLine() {
+    Node* a = head;
+    while (a != 0) {
+        cout << a->content << endl;
+        a = a->next;
+    }
 }
 
 
@@ -168,9 +182,11 @@ int main(){
     ss.push_back("1");
     ss.push_back("&&");
     ss.push_back("2");
+    ss.push_back("fdjsal;k");
+    ss.push_back("fd");
 
     Line abc(ss);
-
+    abc.printLine();
 
 
     return 0;

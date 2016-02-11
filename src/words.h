@@ -7,6 +7,10 @@ using namespace std;
 
 //Nodes can be either a bash command or a connector
 class Node {
+
+    //MAKE THIS PROTECTED
+
+
     public:
         Node* next;
         string content;
