@@ -99,35 +99,46 @@ int execute(char* cmd[]) {
                   //        (this case: output) between parent and child
                   //        process.
     
-    pipe(fd);
+
+    if (pipe(fd) == -1) {
+        perror("Pipe create error");
+    }
+
     pid = fork();
     if (pid < 0) {
-        perror("rshell");
+        perror("fork() function error");
     }else if (pid == 0) {
         //Wangho: Close the read function of pipe
-        close(fd[0]);
+        if (close(fd[0] == -1)) {
+            perror("Close pipe error [0]");
+        }
         //Wangho: This is the child process
         output = execvp(cmd[0], cmd);
 
         //Wangho: Will only be here if execp() fail, which means output failed
-        write(fd[1], &output, sizeof(output));
-        perror("rshell");
+        if (write(fd[1], &output, sizeof(output)) == -1) {
+            perror("Pipe write error");
+        }
+        perror("Invalid command");
         exit(0);
     }else if (pid > 0) {
         //Wangho: Close the write function of pipe
-        close(fd[1]);
+        if (close(fd[1])) {
+            perror("Close pipe error [1]");
+        }
         //Wangho: This is the parent process
         waitpid(pid, &status, 0);
         
         //Wangho: When child process is fully returned
         if(WIFEXITED(status)){
             //Wangho: Take the output value; if execvp fail, it returns -1
-            read(fd[0], &output, sizeof(output));
+            if (read(fd[0], &output, sizeof(output)) == -1) {
+                perror("Pipe read error");
+            }
             return output;
         }
     }
 }
-
 
 int main(){
     char a[] = "pwd";
