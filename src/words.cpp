@@ -167,7 +167,7 @@ int execute(char* cmd[]) {
         if (write(fd[1], &output, sizeof(output)) == -1) {
             perror("Pipe writing error");
         }
-        perror("Invalid command");
+        perror(cmd[0]);
     }else if (pid > 0) {
         //Wangho: Close the write function of pipe
         if (close(fd[1])) {
@@ -191,7 +191,7 @@ int main(){
     vector<string> ss;
     ss.push_back("ls      -a");
     ss.push_back("&&");
-    ss.push_back("pw");
+    ss.push_back("ls -e");
     ss.push_back("||");
     ss.push_back("echo hello world");
 
