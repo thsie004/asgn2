@@ -59,7 +59,7 @@ void Node::run(int state) {
     if (state == 0){
         char* test = new char[content.size()+1];
         char* cstr = new char[content.size()+1];
-        char *pch1, *pch2;
+        char *pch1, *pch2, quit[] = "exit";
         int count = 0, i = 0;
         
         //we're cutting string up twice
@@ -80,6 +80,9 @@ void Node::run(int state) {
             i++;
             pch2 = strtok(NULL, " ");
         }
+        
+        if (!strcmp(cmd[0], quit)) exit(0);
+
         cmd[count] = NULL;
          
         int status = execute(cmd);
@@ -187,17 +190,18 @@ int execute(char* cmd[]) {
     }
 }
 
+/*
 int main(){
     vector<string> ss;
     ss.push_back("ls      -a");
     ss.push_back("&&");
-    ss.push_back("ls -e");
-    ss.push_back("||");
-    ss.push_back("echo hello world");
+    ss.push_back("exit hello");
+    ss.push_back(";");
+    ss.push_back("echo hello");
 
     Line abc(ss);
     abc.run();
 
     return 0;
 }
-
+*/
