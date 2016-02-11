@@ -1,63 +1,60 @@
-#ifndef WORDS_H
-#define WORDS_H
+#ifndef _WORDS_H
+#define _WORDS_H
 #include <vector>
 #include <string>
 
 using namespace std;
 
+//Base class
 class Words {
-    public:
-        Words(){};
-        virtual void run() = 0;
-};
-
-class Command: public Words {
-    protected:
-        char* cmd[];
-
-    public:
-        Command(char* command[]) {
-            strcpy(cmd, command);
-        }
-        char get_cmd(){return cmd;};
-};
-
-class Link: public Words{
     protected:
         Words* L;
         Words* R;
 
     public:
-        Link(){};
-        void run() = 0;
+        Words(){};
+        virtual int execute(int) = 0;
 };
 
-class Line: public Words{
+//Command has strings in the form of e.g. "rm -r -f"
+class Command: public Words {
     protected:
-        vector<Words*> log;
-        vector<string> comments;
-        vector<string> line;
+        string command;
 
     public:
-        Line(vector<string> input){
-            line = input;
-        }
-        vector<string> evaluate(){return line;}
-        void memorize(string);
+        Command(Words*, Words*, string);
+        ~Command();
+
+        int execute(int);
 };
 
+//Link will determine what value to pass onto the next command
+//depending on what value it has received.
+class Link: public Words {
+    protected:
+        string connector;
 
+    public:
+        Link(Words*, Words*, string);
+        ~Link();
 
+        int execute(int);
+};
 
+//Basically the head of the user input. Organizes input into a 
+//easily executable chain of Words.
+class Line {
+    protected:
+        Words* head;
 
+    public:
+        Line(vector<string>);
+        ~Line();
+        void run();
+};
 
+//Function that converts strings into array of cstring for execvp.
+char** gimmeArgs(string);
 
-
-
-
-
-
-
-
-
+#endif
 
