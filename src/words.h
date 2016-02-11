@@ -4,7 +4,7 @@
 #include <string>
 
 using namespace std;
-/*
+
 //Base class
 class Words {
     protected:
@@ -55,7 +55,7 @@ class Line {
 
 //Function that converts strings into array of cstring for execvp.
 char** gimmeArgs(string);
-*/
+
 //Wangho: This function executes commands: cmd[0] should contain the
 //        main command while anything else is flags, ***NEED a NULL at the
 //        end of it.

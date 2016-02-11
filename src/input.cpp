@@ -1,9 +1,13 @@
 #ifndef _INPUT_CPP_
 #define _INPUT_CPP_
-#include <cstdlib>
-#include <iostream>
+#include <string>
+#include <vector>
 
 using namespace std;
+
+/* This file includes functions and methods for obtaining user input
+ */
+
 
 //TOM: This function removes extra spaces at the head and tail of input
 //     and also removes comments followed by #.
@@ -146,8 +150,8 @@ void getInput(vector<string> &tokenz) {
 }
 
 //IMPORTANT!: TOM: I have moved your execute to words.h and words.cpp because
-//this function will only be used by that class, and not for inputs. Please update
-//this function in those files when you start working.
+//this function will only be used by that class, and not for inputs. Please 
+//update this function in those files when you start working.
 
 #endif
 
