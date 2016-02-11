@@ -6,9 +6,76 @@
 #include <sys/types.h>
 #include "words.h"
 
+//implementation of Command
+Command::Command(Words* a, string token) {
+    this->next = a;
+    this->command = token;
+}
+
+Command::~Command() {
+}
+
+//implementation of Link
+Link::Link(Words* a, string token) {
+    this->next = a;
+    this->connector = token;    
+}
+
+Link::~Link() {
+}
+
+int Link::run(int state) {
+    if (connector == "||") {
+        if (state > 0) {
+            next->run(0);
+            return 0;
+        }else {
+            next->run(1);
+            return 1;
+        }
+    }
+    
+    if (connector == "&&") {
+        if (state > 0) {
+            next->run(1);
+            return 1;
+        }else {
+            next->run(0);
+            return 0;
+        }
+    }
+
+    if (connector == ";") {
+        next->run(1);
+        return 1;
+    }
+
+    return -1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int execute(char** cmd) {
-    pid_t pid;
-    int status;
     int output = 0;
     int fd[2];    //Wangho: This is a pipe made for passing variable
                   //        (this case: output) between parent and child

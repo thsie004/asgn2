@@ -8,21 +8,20 @@ using namespace std;
 //Base class
 class Words {
     protected:
-        Words* L;
-        Words* R;
+        Words* next;
 
     public:
         Words() {};
         virtual int run(int) = 0;
 };
 
-//Command has strings in the form of e.g. "rm -r -f"
+//Command has string in the form of e.g. "rm -r -f"
 class Command: public Words {
     protected:
         string command;
 
     public:
-        Command(Words*, Words*, string);
+        Command(Words*, string);
         ~Command();
 
         int run(int);
@@ -35,7 +34,7 @@ class Link: public Words {
         string connector;
 
     public:
-        Link(Words*, Words*, string);
+        Link(Words*, string);
         ~Link();
 
         int run(int);
@@ -43,18 +42,13 @@ class Link: public Words {
 
 //Basically the head of the user input. Organizes input into a 
 //easily executable chain of Words.
-class Line {
-    protected:
-        Words* head;
-
+class Line: public Words {
     public:
         Line(vector<string>);
         ~Line();
-        void doIt();
-};
 
-//Function that converts strings into array of cstring for execvp.
-char** gimmeArgs(string);
+        int run(int);
+};
 
 //Wangho: This function executes commands: cmd[0] should contain the
 //        main command while anything else is flags, ***NEED a NULL at the
