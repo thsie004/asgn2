@@ -6,35 +6,18 @@
 #include <sys/types.h>
 #include "words.h"
 
-//implementation of Command
-Command::Command(string token) {
-    this->command = token;
+//implementation of Node
+Node::Node(string token) {
+    this->content = token;
 }
 
-void Command::setNext(Words* n) {
+void Node::setNext(Words* n) {
     this->next = n;
 }
 
-void Command::run(int state) {
-    if (state > 0){
-
-    }else {
-        if (next == 0) return; 
-        next->run(0);
-    }
-}
-
-//implementation of Link
-Link::Link(string token) {
-    this->connector = token;    
-}
-
-void Link::setNext(Words* n) {
-    this->next = n;
-}
-
-void Link::run(int state) {
-    if (connector == "||") {
+void Node::run(int state) {
+    //BEGIN: if the node is a connector
+    if (content == "||") {
         if (state > 0) {
             next->run(0);
         }else {
@@ -43,7 +26,7 @@ void Link::run(int state) {
         return;
     }
     
-    if (connector == "&&") {
+    if (content == "&&") {
         if (state > 0) {
             next->run(1);
         }else {
@@ -52,22 +35,36 @@ void Link::run(int state) {
         return;
     }
 
-    if (connector == ";") {
+    if (content == ";") {
         if (next == 0) {
-            return;
         }else {
             next->run(1);
         }
+        return;
     }
+    //END: if the node is a connector
+
+    //Then the node is a bash command
+    if (state > 0){
+
+    }else {
+        if (next == 0) return;
+        next->run(0);
+    }                                    
 }
 
 //implementation of Line
 Line::Line(vector<string> input) {
     if (input.empty()) return;
 
-    for (int i = input.size() - 1; i <= 0; i--) {
-        
+    this->next = new Node(input.at(1));
+
+    Words *a, *b;
+
+    for (int i = 0; i < input.size(); i++) {
+
     }
+
 }
 
 void Line::run(int state){

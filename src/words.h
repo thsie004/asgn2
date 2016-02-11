@@ -15,32 +15,19 @@ class Words {
         virtual void run(int) = 0;
 };
 
-//Command has string in the form of e.g. "rm -r -f"
-class Command: public Words {
+//Nodes can be either a bash command or a connector
+class Node: public Words {
     protected:
-        string command;
+        string content;
 
     public:
-        Command(string);
+        Node(string);
 
         void setNext(Words*);
         void run(int);
 };
 
-//Link will determine what value to pass onto the next command
-//depending on what value it has received.
-class Link: public Words {
-    protected:
-        string connector;
-
-    public:
-        Link(string);
-
-        void setNext(Words*);
-        void run(int);
-};
-
-//Basically the head of the user input. Organizes input into a 
+//Basically the head of the user input linked list. Organizes input into a 
 //easily executable chain of Words.
 class Line: public Words {
     public:
