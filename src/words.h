@@ -4,7 +4,7 @@
 #include <string>
 
 using namespace std;
-
+/*
 //Base class
 class Words {
     protected:
@@ -13,7 +13,7 @@ class Words {
 
     public:
         Words() {};
-        virtual int execute(int) = 0;
+        virtual int run(int) = 0;
 };
 
 //Command has strings in the form of e.g. "rm -r -f"
@@ -25,7 +25,7 @@ class Command: public Words {
         Command(Words*, Words*, string);
         ~Command();
 
-        int execute(int);
+        int run(int);
 };
 
 //Link will determine what value to pass onto the next command
@@ -38,7 +38,7 @@ class Link: public Words {
         Link(Words*, Words*, string);
         ~Link();
 
-        int execute(int);
+        int run(int);
 };
 
 //Basically the head of the user input. Organizes input into a 
@@ -50,12 +50,12 @@ class Line {
     public:
         Line(vector<string>);
         ~Line();
-        void run();
+        void doIt();
 };
 
 //Function that converts strings into array of cstring for execvp.
 char** gimmeArgs(string);
-
+*/
 //Wangho: This function executes commands: cmd[0] should contain the
 //        main command while anything else is flags, ***NEED a NULL at the
 //        end of it.

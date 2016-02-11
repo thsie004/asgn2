@@ -42,3 +42,17 @@ int execute(char** cmd) {
         }
     }
 }
+
+/*
+int main(){
+    char a[] = "pwd";
+    char b[] = "";
+    char* cmd[3];
+    cmd[0] = a;
+    cmd[1] = b;
+    cmd[2] = NULL;
+    
+    execute(cmd);
+    return 0;
+}
+*/
