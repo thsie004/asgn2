@@ -15,6 +15,14 @@ Command::Command(Words* a, string token) {
 Command::~Command() {
 }
 
+void Command::run(int state) {
+    if (state > 0){
+
+    }else {
+        next->run(0);
+    }
+}
+
 //implementation of Link
 Link::Link(Words* a, string token) {
     this->next = a;
@@ -24,35 +32,34 @@ Link::Link(Words* a, string token) {
 Link::~Link() {
 }
 
-int Link::run(int state) {
+void Link::run(int state) {
     if (connector == "||") {
         if (state > 0) {
             next->run(0);
-            return 0;
         }else {
             next->run(1);
-            return 1;
         }
+        return;
     }
     
     if (connector == "&&") {
         if (state > 0) {
             next->run(1);
-            return 1;
         }else {
             next->run(0);
-            return 0;
         }
+        return;
     }
 
     if (connector == ";") {
         next->run(1);
-        return 1;
+        return;
     }
 
-    return -1;
+    return;
 }
 
+//implementation of Line
 
 
 

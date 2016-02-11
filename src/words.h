@@ -12,7 +12,7 @@ class Words {
 
     public:
         Words() {};
-        virtual int run(int) = 0;
+        virtual void run(int) = 0;
 };
 
 //Command has string in the form of e.g. "rm -r -f"
@@ -24,7 +24,7 @@ class Command: public Words {
         Command(Words*, string);
         ~Command();
 
-        int run(int);
+        void run(int);
 };
 
 //Link will determine what value to pass onto the next command
@@ -37,7 +37,7 @@ class Link: public Words {
         Link(Words*, string);
         ~Link();
 
-        int run(int);
+        void run(int);
 };
 
 //Basically the head of the user input. Organizes input into a 
@@ -47,7 +47,7 @@ class Line: public Words {
         Line(vector<string>);
         ~Line();
 
-        int run(int);
+        void run(int);
 };
 
 //Wangho: This function executes commands: cmd[0] should contain the
