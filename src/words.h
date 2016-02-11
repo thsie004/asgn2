@@ -7,19 +7,16 @@ using namespace std;
 
 //Nodes can be either a bash command or a connector
 class Node {
-
-    //MAKE THIS PROTECTED
-
-
-    public:
+    protected:
         Node* next;
         string content;
 
     public:
         Node(string);
 
-        void setNext(Node*);
         Node* getNext();
+        string getContent();
+        void setNext(Node*);
         void run(int);
 };
 

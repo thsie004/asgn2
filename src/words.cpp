@@ -1,4 +1,5 @@
 #include <cstring>
+#include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,15 +9,19 @@
 
 //implementation of Node
 Node::Node(string token) {
-        this->content = token;
+    this->content = token;
 }
 
 void Node::setNext(Node* n) {
-        this->next = n;
+    this->next = n;
 }
 
 Node* Node::getNext() {
-        return this->next;
+    return this->next;
+}
+
+string Node::getContent() {
+    return this->content;
 }
 
 void Node::run(int state) {
@@ -56,7 +61,7 @@ void Node::run(int state) {
         next->run(0);
     }                                    
 }
-#include<iostream>
+
 //implementation of Line
 Line::Line(const vector<string> &input) {
     if (input.empty()) return;
@@ -80,7 +85,7 @@ Line::~Line() {
 
     while (a != 0) {
         x = a;
-        a = a->next;
+        a = a->getNext();
 
         delete x;
     }
@@ -93,30 +98,14 @@ void Line::run(int state){
 void Line::printLine() {
     Node* a = head;
     while (a != 0) {
-        cout << a->content << endl;
-        a = a->next;
+        cout << a->getContent() << endl;
+        a = a->getNext();
     }
 }
 
 
 
-//Line is EXTREMELY INCOMPLETE
-//also the code in this main will cause mem leak and im still testing stuff
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//Executes a bash command
 int execute(char* cmd[]) {
     pid_t pid;
     int status;
