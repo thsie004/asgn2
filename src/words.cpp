@@ -65,7 +65,7 @@ void Node::run(int state) {
         int count = 0, i = 0;
         
         
-        //we're cutting string up twice
+        //we're cutting the string up twice
         //first time is to know how many slots in cmd do we need
         //second time creates the actual char** cmd into execute()        
         strcpy(test, content.c_str());
@@ -78,7 +78,7 @@ void Node::run(int state) {
         }
         
         //-Werror and -pedantic gave me a lot of trouble for this
-        //so there may be bugs/unknown segfaults.
+        //so a variable length array is no good.
         char* cmd[100];
         pch2 = strtok(cstr, " ");
         while (pch2 != NULL) {
@@ -96,7 +96,10 @@ void Node::run(int state) {
              
         int status = execute(cmd);
 
+        //if there's no other nodes behind this then return
         if (next == 0) return;
+
+        //all things checked, run next string
         next->run(status);
         
         //delete[] test;

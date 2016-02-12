@@ -25,7 +25,7 @@ class Node {
 };
 
 //Basically the head of the user input linked list. Organizes input into a 
-//easily executable chain of Words.
+//easily executable chain of Nodes.
 class Line {
     protected:
         Node* head;

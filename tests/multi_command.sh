@@ -9,6 +9,12 @@ echo Start testing multi_command
 echo ===========================
 
 ~/rshell/bin/rshell << GUARD
+hello ||
+no||
+this&&
+is&&            #tests
+patrick||
+echo nvm 
 ls; echo this is all correct && lss || pwd
 git status ; good || pwd
 pwd &&                 ls ; #hello

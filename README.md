@@ -5,11 +5,11 @@
     This is Rshell created for assignment 2 of CS100 in Spring 2016.
 ---
 ###Known Bugs/Issues:
-    -   This rshell does not interpret bash operators besides "&&", "||", and ";" 
-    very well. An input like "ls &" will be read as 'execute ls in background' 
-    in bash while it is interpreted as 'ls with a flag "&"' in rshell. In 
-    rshell other non-related bash chaining operators will be treated as if they 
-    are part of a command.
+    -   This rshell does not interpret bash operators besides "&&", "||", and 
+    ";" very well. An input like "ls &" will be read as 'execute ls in 
+    background' in bash while it is interpreted as 'ls with a flag "&"' in 
+    rshell. In rshell other non-related bash chaining operators will be 
+    treated as if they are part of a command.
 
     -   Inputting "ls -e" to the program will bug it because execvp() returns a 
     success signal as ls is called successfully. However, option -e will not 
@@ -30,10 +30,15 @@
     recognized by rshell and executed or attached to the front of your next 
     input after the long-lasting command halted.
 
-    -   !SHELL SCRIPTS ONLY! Empty lines in a heredoc input redirection into 
+    -   !SHELL SCRIPTS ONLY! User commands in a heredoc input redirection into 
     rshell will not have a newline character displayed on the screen since we 
     use getline to received user input and getline rids the input string of 
     the '\n' delimiter. So if it is not typed out into rshell, it will not be 
-    shown on your screen. The consequence is a lump of input prompts clustered 
-    together, and have no substantial affects.
+    shown on your screen. The consequence of this is a weirdly formatted output
+    when you are using a script, and have no substantial affects other than
+    aesthetically displeasing.
+
+    -   As we use strtok to break up user inputs, our program currently cannot
+    treat arguments in the form of "[arguments with spaces]" as a whole. This
+    also applies to other arguments that need a space inbewteen words.
 ---     
