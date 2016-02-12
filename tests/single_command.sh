@@ -2,7 +2,7 @@
 
 #DO NOT REMOVE
 echo The test script assumes you are in rshell and will run rshell with
-echo the command "./bin/rshell" while feeding it input with heredoc.
+echo the command "~/rshell/bin/rshell" while feeding it input with heredoc.
 #DO NOT REMOVE
 
 echo Start testing single_command
