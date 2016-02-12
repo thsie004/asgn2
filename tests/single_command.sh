@@ -20,7 +20,9 @@ echo back to good
 pwd
 git status
 lss -a
-ls -a
+ls        -a;
+pwd -a
+git remote          ;
 
 GUARD
 

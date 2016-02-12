@@ -10,5 +10,15 @@ echo ===========================
 
 ~/rshell/bin/rshell << GUARD
 ls; echo this is all correct && lss || pwd
-git status ; echo or but command in front is good || pwd
+git status ; good || pwd
+pwd &&                 ls ; #hello
+ppd || ls-l && heeee;;;
+                    ls && git status |||mdmd ;
+ls + && gi co ||     ;;;
+;;; gi mdsn || ls -a && .h ;;; #hi
+pwd || ls && pwd    ;;
+git status; &&; pwd || play
+echo heelo;;; ls  && pwd          ##
+its dmals |}dakl && ls #end
+git status            &&   echo exit ; exit #exit
 GUARD
