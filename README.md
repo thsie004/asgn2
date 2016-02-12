@@ -31,3 +31,11 @@ Known Bugs/Issues:
      10 www.google.com), any input from the keyboard will be recognized by 
      rshell and executed or attached to the front of your next input after the
      long-lasting command halted.
+
+    -*For shell scripts only* Empty lines in a heredoc input redirection into
+     rshell will not have a newline character displayed on the screen since
+     we use getline to received user input and getline rids the input string
+     of the '\n' delimiter. So if it is not typed out into rshell, it will
+     not be shown on your screen. The consequence is a lump of input prompts
+     clustered together, and have no substantial affects.
+     

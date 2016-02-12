@@ -3,11 +3,11 @@
 echo ***testing rshell with shell script***
 
 bin/rshell << GUARD
-
-
 echo hello world
-why why why
-ls -l #trollolol
-ping -c 10 www.google.com
+ls -l #helloooooo
+ping -c 5 www.google.com
+git status
+
+
 GUARD
 
