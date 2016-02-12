@@ -88,7 +88,9 @@ void Node::run(int state) {
         }
         
         //quit rshell if the command is "exit" followed by whatever
-        if (!strcmp(cmd[0], quit)) exit(0);
+        if (!strcmp(cmd[0], quit)) {
+            exit(0);
+        }
 
         cmd[count] = NULL;
              

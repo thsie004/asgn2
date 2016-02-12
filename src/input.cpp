@@ -90,9 +90,15 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
     //TOM: coin stores command substrings temporarily.
     string coin;
     
-    cin.clear(); 
+    //cin.clear(); 
     cout << user << '@' << host << "$ ";
-    getline(cin, input);
+    if (getline(cin, input)) {
+        //does nothing if there is an input, even if it's just "\n"
+    }else {
+        //else a shell script is running and giving us empty inputs
+        cout << endl;
+        exit(0);
+    }
 
     while (true) {
         prepareInput(input);
