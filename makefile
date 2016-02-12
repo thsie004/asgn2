@@ -4,6 +4,8 @@ CFLAGS=-Wall -Werror -ansi -pedantic
 
 all: bin/rshell
 
+rshell: bin/rshell
+
 bin/rshell:
 	mkdir bin
 	$(CC) $(CFLAGS) src/main.cpp -o bin/rshell
