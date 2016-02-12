@@ -17,7 +17,8 @@ Known Bugs/Issues:
      a success signal as ls is called successfully. However, option -e will 
      not work for ls, so ls will not do its job although successfully called. 
      So, we cannot get what we want which is for execvp() to return the fail 
-     value.
+     value. As a consequence, commands like "ls -e && echo why" will print
+     'why' in rshell while it will not print 'why' in bash.
 
     -Commands may not exceed 998 characters because strtok() interacts very
      badly with dynamically allocated array and will not let it be freed
