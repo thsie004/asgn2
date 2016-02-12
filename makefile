@@ -2,7 +2,7 @@ SHELL=/bin/sh
 CC=g++
 CFLAGS=-Wall -Werror -ansi -pedantic
 
-all: bin/rshell
+all: rshell
 
 rshell: bin/rshell
 
