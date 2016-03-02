@@ -169,8 +169,15 @@ int execute(char* cmd[]) {
     int fd[2];    //Wangho: This is a pipe made for passing variable
                   //        (this case: output) between parent and child
                   //        process.
+    int last;
 
-    if (strcmp(cmd[0], "test") == 0 || strcmp(cmd[0], "[") == 0) {
+    for (int i = 0; cmd[i] != NULL; i++) {
+        last++;
+    }
+    last = last - 1;
+    //cout << "Last is: " << last << " content: " << cmd[last] << endl;
+
+    if (strcmp(cmd[0], "test") == 0) {
         //cout << "I'm in the test zone" << endl;
         testResult = test(cmd);
 
@@ -179,7 +186,17 @@ int execute(char* cmd[]) {
         }else {
             return -1;
         }
-    }    
+    }
+
+    if (strcmp(cmd[0], "[") == 0 && strcmp(cmd[last], "]") == 0) {    
+        testResult = test(cmd);
+
+        if (testResult == 0) {
+            return 0;
+        }else {
+            return -1;
+        }
+    }
 
     if (pipe(fd) == -1) {
         perror("Pipe error");
