@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include "words.h"
+#include "test.cpp"
 
 //implementation of Node
 Node::Node(string token) {
@@ -160,13 +161,25 @@ void Line::printLine() {
 //Executes a bash command, returns 0 if successful, -1 if uneventful.
 //Note execvp returns success if the command is valid but the flag is not.
 int execute(char* cmd[]) {
+    
     pid_t pid;
     int status;
+    int testResult;
     int output = 0;
     int fd[2];    //Wangho: This is a pipe made for passing variable
                   //        (this case: output) between parent and child
                   //        process.
-    
+
+    if (strcmp(cmd[0], "test") == 0 || strcmp(cmd[0], "[") == 0) {
+        //cout << "I'm in the test zone" << endl;
+        testResult = test(cmd);
+
+        if (testResult == 0) {
+            return 0;
+        }else {
+            return -1;
+        }
+    }    
 
     if (pipe(fd) == -1) {
         perror("Pipe error");

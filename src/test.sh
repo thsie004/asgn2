@@ -8,5 +8,5 @@ if test $flag $path; then
   exit 0
 else
   echo "(False)" >&2
-  exit1
+  exit 1
 fi
