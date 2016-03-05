@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include "words.h"
@@ -181,6 +182,10 @@ int execute(char* cmd[]) {
     //Wangho: Check if the command starts with "test"
     if (strcmp(cmd[0], "test") == 0 || (strcmp(cmd[0], "[") == 0 && strcmp(cmd[last], "]") == 0)) {
         //cout << "I'm in the test zone" << endl;
+        if (last == 0) {
+            return -1;
+        }
+
         testResult = test(cmd);
 
         if (testResult == 0) {

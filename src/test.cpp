@@ -11,7 +11,16 @@ int test(char* cmd[]) {
         fullPath += cmd[2];
     }else {
         fullPath += "-e ";
-        fullPath += cmd[1];
+        
+        if (strchr(cmd[1], '-') != 0) {
+            if (cmd[2] != NULL) {
+                fullPath += cmd[2];
+            }else {
+                return -1;
+            }
+        }else {
+            fullPath += cmd[1];
+        }
     }
     
     cout << "Fullpath is: " << fullPath << endl;
