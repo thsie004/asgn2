@@ -50,4 +50,7 @@
     -   The test command in its bracket form will need spaces between each argument
     (i.e. [-e bin] will not work but [ -e bin ] will). This is due to the use of
     strtok for its implementation.
+
+    -   The shell script uses heredoc and assumes the directory of rshell to be
+    at "~/rshell/bin/rshell".
 ---
