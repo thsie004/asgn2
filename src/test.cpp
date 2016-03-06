@@ -1,25 +1,25 @@
 int fileCheck(string flag, string path) {
-    int result;
     struct stat check;
- 
-    if (flag == "-e") {   
-        result = stat(path.c_str(), &check);
-        return result;
+    int result = stat(path.c_str(), &check); 
+
+    if (flag == "-e") {
+        return result;   
+        //cout << result << endl;
     }else if (flag == "-f") {
-        stat(path.c_str(), &check);
         if (S_ISREG(check.st_mode)) {
             return 0;
         }else {
             return -1;
         }
     }else if (flag == "-d") {
-        stat(path.c_str(), &check);
         if (S_ISDIR(check.st_mode)) {
             return 0;
         }else {
             return -1;
         }
     }
+
+    return -1;
 }
 
 int test(char* cmd[]) {
