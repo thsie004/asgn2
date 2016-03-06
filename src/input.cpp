@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -73,6 +74,51 @@ void getMoreInput(string &input) {
     return;
 }
 
+
+//TOM: Pushes a token back after preceding parenthesis characters
+//     have been dealt with, then pushes following parenthesis characters.
+//     CloseIt is the number of ')'s we need to push back at the end.
+//     Returns -1 if there is a ')' at the front => error, and returns 0 else.
+//
+void pushWithParen(vector<string> &v, 
+                  string coin, 
+                  int &parenBalance, 
+                  int closeIt = 0) {
+
+    prepareInput(coin);
+
+    if (coin.at(0) == '(') {
+        v.push_back("(");
+        
+        parenBalance += 1;
+        coin.erase(0, 1);
+        cout << "pushed ( and coin is now: " << '|' << coin << '|' << endl;
+        pushWithParen(v, coin, parenBalance);
+
+    }else if (coin.at(coin.size()-1) == ')') {
+        parenBalance -= 1;
+        coin.erase(coin.size()-1, 1);
+        cout << "pushed ) and coin is now: " << '|' << coin << '|' << endl;
+        
+        pushWithParen(v, coin, parenBalance, closeIt+1);
+
+    }else{
+        if (coin.find("(") != string::npos || 
+            coin.find(")") != string::npos || 
+            coin == "") {
+
+            parenBalance = -1;
+            return;
+        }
+
+        v.push_back(coin);
+
+        for(int i = closeIt; i > 0; i--) {
+            v.push_back(")");
+        }
+    }
+}
+
 //TOM: Pass in an empty vector and get back a vector with tokens
 //     (e.g. "ls -a" or "||" or "echo hello") in sequential order.
 //     Note that the "exit" command is not handled here, because
@@ -89,6 +135,8 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
     unsigned int cutPos;
     //TOM: coin stores command substrings temporarily.
     string coin;
+    //TOM: '(' adds 1, ')' adds -1 to this variable
+    int parenBalance = 0;
     
     //cin.clear(); 
     cout << user << '@' << host << "$ ";
@@ -128,15 +176,30 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
         }
 
         if (cutPos == 99999999) {
-            tokenz.push_back(input);
-            
-            break;
+            pushWithParen(tokenz, input, parenBalance);
+
+            if (parenBalance < 0) {
+                cout << "-rshell: syntax error with improper use of ";
+                cout << "'(' or ')'" << endl;
+
+            }else if (parenBalance > 0) {
+                input = "";
+                getMoreInput(input);
+                 
+            }else {
+                break;
+            }
 
         }else {
             coin = input.substr(0, cutPos);
-            prepareInput(coin);
-            tokenz.push_back(coin);
+            pushWithParen(tokenz, coin, parenBalance);
 
+            if (parenBalance < 0) {
+                cout << "-rshell: syntax error with improper use of ";
+                cout << "'(' or ')'" << endl;
+            }
+
+            
             if (input.at(cutPos) == ';') {
                 tokenz.push_back(";");
                 input.erase(0, cutPos + 1);
@@ -160,15 +223,20 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
     return;
 }
 
-/*
+
 int main() {
     vector<string> hello;
     char x[] = "lol";
     char y[] = "what";
     getInput(hello, x, y);
+
+    for (int i = 0; i < hello.size();i++){
+        cout << hello.at(i) << endl;
+    }
+
     return 0;
 }
-*/
+
 
 #endif
 
