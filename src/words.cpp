@@ -45,11 +45,16 @@ void Node::run(int state, stack<int> &chart) {
     
     if (content == ")") {
         if (next == 0) return;
-
-
-        chart.pop();
-        next->run(state, chart);
-        return;
+        
+        if (chart.top() == 1) {
+            chart.pop();
+            next->run(0, chart);
+            return;
+        }else {
+            chart.pop();
+            next->run(state, chart);
+            return;
+        }
     }
     //END: if the node is a parenthesis
     

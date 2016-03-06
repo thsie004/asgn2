@@ -9,6 +9,9 @@ echo Start testing precedent_test
 echo ============================
 
 ~/rshell/bin/rshell << GUARD
+(echo A || echo second) || echo heya
+(echooo || abc) || echo failed the first two
+(echooo || echo second one is a hit) || echo third one
 echo A && echo B || echo C && echo D
 (echo A&&   echo B) ||     (        #start of line
 echo C && echo D)               #end of line
