@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include "words.h"
@@ -193,6 +195,8 @@ int execute(char* cmd[]) {
         }else {
             return -1;
         }
+    }else if ((strcmp(cmd[0], "[") == 0 && strcmp(cmd[last], "]") != 0)) {
+        return -1;
     }
 
     if (pipe(fd) == -1) {
