@@ -3,6 +3,7 @@
 ---
 ###Abstract:
     This is Rshell created for assignment 2 of CS100 in Spring 2016.
+    Part II updated in early March for assignment 3 of the same class.
 ---
 ###Known Bugs/Issues:
     -   This rshell does not interpret bash operators besides "&&", "||", and 
