@@ -213,6 +213,7 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
 
             }else if (parenBalance > 0) {
                 input = "";
+                tokenz.push_back(";");
                 getMoreInput(input);
                  
             }else {
@@ -263,7 +264,22 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
 
                 if (input.size() == 0) getMoreInput(input);
 
-            }           
+            }
+           
+            //checks for double connector            
+            if (tokenz.size() < 2) continue;            
+            for (unsigned int i = 0; i < tokenz.size() - 1; i++) {
+                if (tokenz.at(i) == "||" ||
+                    tokenz.at(i) == "&&" ||
+                    tokenz.at(i) == ";") {
+                    if (tokenz.at(i+1) == "||" ||
+                        tokenz.at(i+1) == "&&" ||
+                        tokenz.at(i+1) == ";") {
+                        parenBalance = 0;
+                        input = tokenz.at(i+1);
+                    }
+                }
+            }
         }
     }
 

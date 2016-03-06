@@ -45,4 +45,8 @@
 ###Known Bugs/Issues part II:
     -   The "((" and "))" operator in bash is not interpreted as usual, so they
     will be interpreted as two separate regions covered by parentheses.
+
+    -   The test command in its bracket form will need spaces between each argument
+    (i.e. [-e bin] will not work but [ -e bin ] will). This is due to the use of
+    strtok for its implementation.
 ---
