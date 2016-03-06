@@ -81,40 +81,64 @@ void getMoreInput(string &input) {
 //     Returns -1 if there is a ')' at the front => error, and returns 0 else.
 //
 void pushWithParen(vector<string> &v, 
-                  string coin, 
+                  string &coin, 
                   int &parenBalance, 
                   int closeIt = 0) {
 
     prepareInput(coin);
 
-    if (coin.at(0) == '(') {
-        v.push_back("(");
-        
-        parenBalance += 1;
-        coin.erase(0, 1);
-        cout << "pushed ( and coin is now: " << '|' << coin << '|' << endl;
-        pushWithParen(v, coin, parenBalance);
+    //coin not empty means there's something to push
+    if (coin != "") {
+        if (coin.at(0) == '(') {
+            if (!v.empty() && v.at(v.size()-1) == ")") {
+                parenBalance = -1;
+                return;
+            }
 
-    }else if (coin.at(coin.size()-1) == ')') {
-        parenBalance -= 1;
-        coin.erase(coin.size()-1, 1);
-        cout << "pushed ) and coin is now: " << '|' << coin << '|' << endl;
-        
-        pushWithParen(v, coin, parenBalance, closeIt+1);
+            v.push_back("(");
+            
+            parenBalance += 1;
+            coin.erase(0, 1);
+            //cout << "pushed ( and coin is now: " << '|' << coin << '|' << endl;
+            pushWithParen(v, coin, parenBalance);
+    
+        }else if (coin.at(coin.size()-1) == ')') {
+            parenBalance -= 1;
+            coin.erase(coin.size()-1, 1);
+            //cout << "pushed ) and coin is now: " << '|' << coin << '|' << endl;
+            
+            pushWithParen(v, coin, parenBalance, closeIt+1);
+        }else {
+            if (coin.find("(") != string::npos || coin.find(")") != string::npos) {
+                parenBalance = -1;
+                return;
+            }
 
-    }else{
-        if (coin.find("(") != string::npos || 
-            coin.find(")") != string::npos || 
-            coin == "") {
+            v.push_back(coin);
 
-            parenBalance = -1;
-            return;
+            for (int i = closeIt; i > 0; i--) {
+               v.push_back(")");
+            }
+
         }
 
-        v.push_back(coin);
+    //coin is empty and no ')' to insert
+    }else if (closeIt == 0) {
+        return;
 
-        for(int i = closeIt; i > 0; i--) {
-            v.push_back(")");
+    //coin is empty but there is ')' to insert
+    }else {
+        //parenBalance is negative, so returning => error msg
+        if (v.empty()) return;
+
+        if (v.at(v.size()-1) != "(") {
+            for (int i = closeIt; i > 0; i--) {
+                v.push_back(")");
+            }
+
+        }else {
+            parenBalance = -1;
+            return;
         }
     }
 }
@@ -135,7 +159,8 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
     unsigned int cutPos;
     //TOM: coin stores command substrings temporarily.
     string coin;
-    //TOM: '(' adds 1, ')' adds -1 to this variable
+    //TOM: Detection of '(' adds 1 and  ')' adds -1 to this variable.
+    //     If '(' and ')' are paired nicely then this value is 0.
     int parenBalance = 0;
     
     //cin.clear(); 
@@ -164,7 +189,7 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
         //     Note that this doesn't check for invalid characters at front.
         //     Also error message is printed manually, as I can't come up
         //     with an alternative method.
-        if (cutPos == 0) {
+        if (cutPos == 0 && parenBalance == 0) {
             cout << "-rshell: syntax error with unexpected connector ";
 
             if (input.at(0) == '&') cout << "\"&&\"\n";
@@ -173,6 +198,7 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
 
             tokenz.clear();
             return;
+
         }
 
         if (cutPos == 99999999) {
@@ -181,6 +207,9 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
             if (parenBalance < 0) {
                 cout << "-rshell: syntax error with improper use of ";
                 cout << "'(' or ')'" << endl;
+                
+                tokenz.clear();
+                return;
 
             }else if (parenBalance > 0) {
                 input = "";
@@ -191,18 +220,36 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
             }
 
         }else {
-            coin = input.substr(0, cutPos);
-            pushWithParen(tokenz, coin, parenBalance);
+            if (cutPos != 0) {
+                coin = input.substr(0, cutPos);
+                pushWithParen(tokenz, coin, parenBalance);
+            }
 
             if (parenBalance < 0) {
                 cout << "-rshell: syntax error with improper use of ";
                 cout << "'(' or ')'" << endl;
+
+                tokenz.clear();
+                return;
             }
 
-            
-            if (input.at(cutPos) == ';') {
+            //Connector found right after '(' is an error
+            if (!tokenz.empty()) {
+                if (tokenz.at(tokenz.size()-1) == "(") {
+                    string x = input.substr(cutPos, cutPos+1);
+                    if (x != ";") x += input.substr(cutPos+1, cutPos+2);
+                    input = x;
+                    parenBalance = 0;
+                    continue;
+                }
+            }
+
+
+            if (input.at(cutPos) == ';') {                
                 tokenz.push_back(";");
                 input.erase(0, cutPos + 1);
+
+                if (parenBalance > 0) getMoreInput(input);
 
             }else if (input.at(cutPos) == '|'){
                 tokenz.push_back("||");
@@ -223,7 +270,7 @@ void getInput(vector<string> &tokenz, char* user, char* host) {
     return;
 }
 
-
+/*
 int main() {
     vector<string> hello;
     char x[] = "lol";
@@ -236,7 +283,7 @@ int main() {
 
     return 0;
 }
-
+*/
 
 #endif
 
