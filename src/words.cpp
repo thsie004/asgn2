@@ -3,13 +3,20 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include "words.h"
+#include "test.cpp"
 
 //implementation of Node
 Node::Node(string token) {
     this->content = token;
+}
+
+Node::~Node() {
 }
 
 void Node::setNext(Node* n) {
@@ -26,22 +33,48 @@ string Node::getContent() {
 
 //state = 0 means success
 //state = -1 means fail
-void Node::run(int state) {
+//state = 1 means success for the entire parentheses
+void Node::run(int state, stack<int> &chart) {
+    
+    //BEGIN: if the node is a parenthesis
+    if (content == "(") {
+        chart.push(state);
+        next->run(state, chart);
+        return;
+    }
+    
+    if (content == ")") {
+        if (next == 0) return;
+
+
+        chart.pop();
+        next->run(state, chart);
+        return;
+    }
+    //END: if the node is a parenthesis
+    
+    //BEGIN: check the parentheses we're in
+    if (chart.top() == -1) {
+        next->run(-1, chart);
+        return;
+    }
+    //END: check the parentheses we're in 
+    
     //BEGIN: if the node is a connector
     if (content == "||") {
         if (state == 0) {
-            next->run(-1);
+            next->run(-1, chart);
         }else {
-            next->run(0);
+            next->run(0, chart);
         }
         return;
     }
     
     if (content == "&&") {
         if (state == 0) {
-            next->run(0);
+            next->run(0, chart);
         }else {
-            next->run(-1);
+            next->run(-1, chart);
         }
         return;
     }
@@ -49,7 +82,7 @@ void Node::run(int state) {
     if (content == ";") {
         if (next == 0) {
         }else {
-            next->run(0);
+            next->run(0, chart);
         }
         return;
     }
@@ -99,23 +132,26 @@ void Node::run(int state) {
         //if there's no other nodes behind this then return
         if (next == 0) return;
 
+        //successful command execution implies entire parentheses = true
+        if (status == 0) {
+            chart.pop();
+            chart.push(1);
+        }
+
         //all things checked, run next string
-        next->run(status);
+        next->run(status, chart);
         
-        //delete[] test;
-        //delete[] cstr;
-         
     }else {
         if (next == 0) return;
-        next->run(-1);
+        next->run(-1, chart);
     }                                    
 }
 
 //implementation of Line
 Line::Line(const vector<string> &input) {
     head = 0;
-
-    if (!input.empty()) {
+    
+    if (!input.empty()) {        
         Node *a;
         
         head = new Node(input.at(0));
@@ -143,7 +179,9 @@ Line::~Line() {
 }
 
 void Line::run(){
-    if (head != 0) head->run(0);
+    stack<int> chart;
+    chart.push(0);
+    if (head != 0) head->run(0, chart);
 }
 
 //for testing purposes only
@@ -160,13 +198,40 @@ void Line::printLine() {
 //Executes a bash command, returns 0 if successful, -1 if uneventful.
 //Note execvp returns success if the command is valid but the flag is not.
 int execute(char* cmd[]) {
+    
     pid_t pid;
     int status;
+    int testResult;
     int output = 0;
     int fd[2];    //Wangho: This is a pipe made for passing variable
                   //        (this case: output) between parent and child
                   //        process.
-    
+    int last = 0;
+
+    //Wangho: Getting the last non-null element's index
+    for (int i = 0; cmd[i] != NULL; i++) {
+        last++;
+    }
+    last = last - 1;
+    //cout << "Last is: " << last << " content: " << cmd[last] << endl;
+
+    //Wangho: Check if the command starts with "test"
+    if (strcmp(cmd[0], "test") == 0 || (strcmp(cmd[0], "[") == 0 && strcmp(cmd[last], "]") == 0)) {
+        //cout << "I'm in the test zone" << endl;
+        if (last == 0) {
+            return -1;
+        }
+
+        testResult = test(cmd);
+
+        if (testResult == 0) {
+            return 0;
+        }else {
+            return -1;
+        }
+    }else if ((strcmp(cmd[0], "[") == 0 && strcmp(cmd[last], "]") != 0)) {
+        return -1;
+    }
 
     if (pipe(fd) == -1) {
         perror("Pipe error");
@@ -217,11 +282,11 @@ int execute(char* cmd[]) {
 /*
 int main(){
     vector<string> ss;
-    ss.push_back("ls      -a");
-    ss.push_back("&&");
-    ss.push_back("echo why");
-    ss.push_back(";");
+    ss.push_back("(");
     ss.push_back("echo hello");
+    ss.push_back(")");
+//    ss.push_back(";");
+//    ss.push_back("echo hello");
 
     Line abc(ss);
     abc.run();

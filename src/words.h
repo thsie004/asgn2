@@ -2,6 +2,7 @@
 #define _WORDS_H_
 #include <vector>
 #include <string>
+#include <stack>
 
 using namespace std;
 
@@ -17,11 +18,12 @@ class Node {
 
     public:
         Node(string);
+        ~Node();
 
         Node* getNext();
         string getContent();
         void setNext(Node*);
-        void run(int);
+        void run(int, stack<int>&);
 };
 
 //Basically the head of the user input linked list. Organizes input into a 
@@ -33,7 +35,6 @@ class Line {
     public:
         Line(const vector<string> &);
         ~Line();
-
         void run();
         void printLine();
 };
