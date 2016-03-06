@@ -16,6 +16,9 @@ Node::Node(string token) {
     this->content = token;
 }
 
+Node::~Node() {
+}
+
 void Node::setNext(Node* n) {
     this->next = n;
 }
@@ -30,22 +33,48 @@ string Node::getContent() {
 
 //state = 0 means success
 //state = -1 means fail
-void Node::run(int state) {
+//state = 1 means success for the entire parentheses
+void Node::run(int state, stack<int> &chart) {
+    
+    //BEGIN: if the node is a parenthesis
+    if (content == "(") {
+        chart.push(state);
+        next->run(state, chart);
+        return;
+    }
+    
+    if (content == ")") {
+        if (next == 0) return;
+
+
+        chart.pop();
+        next->run(state, chart);
+        return;
+    }
+    //END: if the node is a parenthesis
+    
+    //BEGIN: check the parentheses we're in
+    if (chart.top() == -1) {
+        next->run(-1, chart);
+        return;
+    }
+    //END: check the parentheses we're in 
+    
     //BEGIN: if the node is a connector
     if (content == "||") {
         if (state == 0) {
-            next->run(-1);
+            next->run(-1, chart);
         }else {
-            next->run(0);
+            next->run(0, chart);
         }
         return;
     }
     
     if (content == "&&") {
         if (state == 0) {
-            next->run(0);
+            next->run(0, chart);
         }else {
-            next->run(-1);
+            next->run(-1, chart);
         }
         return;
     }
@@ -53,7 +82,7 @@ void Node::run(int state) {
     if (content == ";") {
         if (next == 0) {
         }else {
-            next->run(0);
+            next->run(0, chart);
         }
         return;
     }
@@ -103,23 +132,26 @@ void Node::run(int state) {
         //if there's no other nodes behind this then return
         if (next == 0) return;
 
+        //successful command execution implies entire parentheses = true
+        if (status == 0) {
+            chart.pop();
+            chart.push(1);
+        }
+
         //all things checked, run next string
-        next->run(status);
+        next->run(status, chart);
         
-        //delete[] test;
-        //delete[] cstr;
-         
     }else {
         if (next == 0) return;
-        next->run(-1);
+        next->run(-1, chart);
     }                                    
 }
 
 //implementation of Line
 Line::Line(const vector<string> &input) {
     head = 0;
-
-    if (!input.empty()) {
+    
+    if (!input.empty()) {        
         Node *a;
         
         head = new Node(input.at(0));
@@ -147,7 +179,9 @@ Line::~Line() {
 }
 
 void Line::run(){
-    if (head != 0) head->run(0);
+    stack<int> chart;
+    chart.push(0);
+    if (head != 0) head->run(0, chart);
 }
 
 //for testing purposes only
@@ -248,11 +282,11 @@ int execute(char* cmd[]) {
 /*
 int main(){
     vector<string> ss;
-    ss.push_back("ls      -a");
-    ss.push_back("&&");
-    ss.push_back("echo why");
-    ss.push_back(";");
+    ss.push_back("(");
     ss.push_back("echo hello");
+    ss.push_back(")");
+//    ss.push_back(";");
+//    ss.push_back("echo hello");
 
     Line abc(ss);
     abc.run();

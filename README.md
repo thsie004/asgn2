@@ -42,3 +42,7 @@
     treat arguments in the form of "[arguments with spaces]" as a whole. This
     also applies to other arguments that need a space inbewteen words.
 ---     
+###Known Bugs/Issues part II:
+    -   The "((" and "))" operator in bash is not interpreted as usual, so they
+    will be interpreted as two separate regions covered by parentheses.
+---
